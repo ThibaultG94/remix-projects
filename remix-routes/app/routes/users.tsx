@@ -1,4 +1,4 @@
-import { useLoaderData } from "@remix-run/react";
+import { Link, Outlet, useLoaderData } from "@remix-run/react";
 
 type User = {
     id: number;
@@ -14,13 +14,16 @@ export const loader = async () => {
 const UsersPage = () => {
     const users = useLoaderData<typeof loader>();
     return (
-        <div>
-            <h1>Liste des utilisateurs</h1>
-            <ul>
-                {users.map((user) => (
-                    <li key={user.id}>{user.name}</li>
-                ))}
-            </ul>
+        <div className="flex py-2 gap-x-4">
+            <div>
+                <h1 className="text-3xl">Liste des utilisateurs</h1>
+                <ul>
+                    {users.map((user) => (
+                        <Link key={user.id} className="flex" to={`/users/${user.id}`}>{user.name}</Link>
+                    ))}
+                </ul>
+            </div>
+            <Outlet />
         </div>
     );
 };

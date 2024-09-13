@@ -27,9 +27,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <div style={{
-      border: "1px solid #000",
-    }}>
+    <div className="m-2 p-2 border-2 border-black">
       <Outlet />
     </div>
 );
