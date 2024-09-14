@@ -1,11 +1,18 @@
 import { ActionFunctionArgs } from "@remix-run/node";
 import { Form, json, useActionData } from "@remix-run/react";
+import { z } from "zod";
+
+const Schema = z.object({
+  email: z.string({ required_error: "Votre email est requis." }).email({ message: "Email invalide." }),
+  name: z.string({ required_error: "Votre nom est requis."}).min(3, { message: "Votre nom doit contenir au moins 3 caractères." }),
+});
 
 export const action = async ({ request }: ActionFunctionArgs) => {
  const formData = await request.formData();
-  const name = formData.get("name");
-  const email = formData.get("email");
-  console.log({ name, email });
+ const object = Object.fromEntries(formData);
+ const { email } = Schema.parse(object);
+  console.log(email);
+
   const isValid = email === "tibo@guilty.fr";
   return json({ isValid });
 };
