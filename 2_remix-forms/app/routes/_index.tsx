@@ -1,17 +1,37 @@
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { getZodConstraint, parseWithZod } from "@conform-to/zod";
 import { ActionFunctionArgs } from "@remix-run/node";
-import { Form, json, useActionData } from "@remix-run/react";
+import { Form, json, useActionData, useLoaderData } from "@remix-run/react";
 import { z } from "zod";
+import { getUsers } from "~/server";
 
 const Schema = z.object({
   email: z.string({ required_error: "Votre email est requis." }).email({ message: "Email invalide." }),
   name: z.string({ required_error: "Votre nom est requis."}).min(3, { message: "Votre nom doit contenir au moins 3 caractères." }),
 });
 
+export const loader = async () => {
+  return await getUsers();
+};
+
 export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData();
-  const submission = parseWithZod(formData, { schema: Schema })
+  const submission = await parseWithZod(formData, { schema: Schema.superRefine(async (data, ctx) => {
+      const { email } = data;
+      const users = await getUsers();
+
+      const existingUser = users.find(user => user.email === email);
+
+      if (existingUser) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["email"],
+          message: `L'email est déjà utilisé par ${existingUser.name}.`,
+        });
+      }
+    }),
+    async: true,
+  });
 
   // Send the submisiion back to the client if the status is not successful
   if (submission.status !== "success") return json({ result: submission.reply() });
@@ -23,6 +43,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export default function Index() {
   const data = useActionData<typeof action>();
+  const users = useLoaderData<typeof loader>();
+
   const [form, fields] = useForm({
     constraint: getZodConstraint(Schema),
     lastResult: data?.result,
@@ -51,6 +73,11 @@ export default function Index() {
         <button className="border bg-teal-300 rounded text-black p-1">Soumettre</button>
         <div className="text-red-600">{form.errors}</div>
       </Form>
+      <ul className="text-yellow-200">
+        {users.map((user) => (
+          <li key={user.id}>{user.email}</li>
+        ))}
+      </ul>
     </div>
   );
 }
