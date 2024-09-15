@@ -1,21 +1,26 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "ES2021",
-    "sourceMap": true,
-    "outDir": "./dist",
-    "baseUrl": "./",
-    "incremental": true,
-    "skipLibCheck": true,
-    "strictNullChecks": false,
-    "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
-  }
+	"extends": "@thibault/typescript-config/base.json",
+	"include": ["env.d.ts", "**/*.ts", "**/*.tsx", "../playwright.config.ts", "tailwind.config.cjs"],
+	"exclude": ["index.d.cts"],
+	"compilerOptions": {
+		"module": "ESNext",
+		"skipLibCheck": true,
+		"lib": ["DOM", "DOM.Iterable", "ES2019"],
+		"isolatedModules": true,
+		"esModuleInterop": false,
+		"jsx": "react-jsx",
+		"noImplicitAny": false,
+		"moduleResolution": "bundler",
+		"resolveJsonModule": true,
+		"target": "ES2019",
+		"strict": true,
+		"allowJs": true,
+		"forceConsistentCasingInFileNames": true,
+		"baseUrl": ".",
+		"paths": {
+			"~/*": ["./app/*"]
+		},
+		"noEmit": true
+	},
+	
 }
