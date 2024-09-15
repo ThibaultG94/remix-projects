@@ -16,7 +16,7 @@ module.exports.getServerBuild = async function getServerBuild() {
   return ssrModule;
 };
 
-module.exports.startDevServer = async function startDevServer() {
+module.exports.startDevServer = async function startDevServer(app) {
   if (process.env.NODE_ENV === "production") return;
   const vite = await import("vite");
   devServer = await vite.createServer({

@@ -1,13 +1,13 @@
 {
     "$schema": "https://turbo.build/schema.json",
     "pipeline": {
+        "dev": {
+            "cache": false,
+            "persistent": true,
+        },
         "build": {
             "outputs": ["dist/**"]
         },
         "type-check": {}
     }
 }
-// Commande pour forcer un git push 
-git push origin HEAD:main
-// Commande pour forcer un git push
-git push origin HEAD:main --force
