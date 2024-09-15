@@ -1,0 +1,29 @@
+const path = require("node:path");
+
+let devServer;
+const SERVER_DIR = path.join(__dirname, "build/server/index.js");
+const PUBLIC_DIR = path.join(__dirname, "build/client");
+
+module.exports.getPublicDir = function getPublicDir() {
+  return PUBLIC_DIR;
+};
+
+module.exports.getServerBuild = async function getServerBuild() {
+  if (process.env.NODE_ENV === "production" || devServer === null) {
+    return require(SERVER_DIR);
+  }
+  const ssrModule = await devServer.ssrLoadModule("virtual:remix/server-build");
+  return ssrModule;
+};
+
+module.exports.startDevServer = async function startDevServer() {
+  if (process.env.NODE_ENV === "production") return;
+  const vite = await import("vite");
+  devServer = await vite.createServer({
+    root: __dirname,
+    server: { middlewareMode: "true" },
+  });
+
+  app.use(devServer.middlewares);
+  return devServer;
+};
